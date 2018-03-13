@@ -2,30 +2,16 @@ const AlbumSchema = require('../Schemas/AlbumSchema');
 const User = require('../Schemas/user');
 
 module.exports = function (router) {
-  router.route('/albums/:user_id')
-    .put((req, res) => {
-      User.findById(req.params.user_id, (err, user) => {
-        if (err) res.send(err);
-          const { name, created_at, capacity } = req.body;
-          const newAlbum = new AlbumSchema({ name, created_at: Date.now(), capacity });
-
-          newAlbum.save(err => {
-            if (err) {
-              console.log(err);
-              res.send({ AlbumSuccess: false });
-            } else {
-              console.log('new Album created!')
-            }
-          })
-
-            user.albums.push(newAlbum);
-
-            user.save((err) => {
-              if (err) res.send(err);
-              res.json({ message: 'User updated wiuth new Album' })
-            });
+  router.route('/albums/')
+    .post((req, res) => {
+        const { name, capacity, user_id } = req.body;
+        if (!user_id) res.send("No user was found.");
+        const newAlbum = new AlbumSchema({ name, created_at: Date.now(), capacity });
+        newAlbum.save(err => {
+          if (err) res.send({ AlbumSuccess: false, err });
+          res.send(newAlbum)
         });
-      })
+    })
     .get((req, res) => {
         User.findById(req.params.user_id, (err, user) => {
           if (err) res.send(err);
