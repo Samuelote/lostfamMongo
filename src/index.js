@@ -14,9 +14,9 @@ const port = process.env.PORT || 8080;
 const router = express.Router();
 
 /* Routes */
-require('./routes/albums')(router);
-require('./routes/genUser')(router);
-require('./routes/pics')(router);
+require('./routes/album_routes')(router);
+require('./routes/user_routes')(router);
+require('./routes/pics_routes')(router);
 
 
 app.use('/api', router);

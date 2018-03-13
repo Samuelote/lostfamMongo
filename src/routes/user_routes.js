@@ -1,5 +1,6 @@
-const User  = require('../Schemas/user');
+const User  = require('../Schemas/UserSchema');
 const axios = require('axios');
+const { ROOT_URL } = require('../serverConfig');
 
 module.exports = function (router) {
 //Intiate Album handlers for User then pass off to Album routes
@@ -11,21 +12,37 @@ module.exports = function (router) {
       User.findById(user_id, (err, user) => {
         if (err) res.send(err);
         const { name, capacity } = req.body;
-        axios.post(`http://localhost:8080/api/albums`, {
+        axios.post(`${ROOT_URL}/api/albums`, {
           name,
           capacity,
           user_id
         }).then(axiosRes => {
         //Gets the newly created AlbumSchema's id
-          const newAlbum = axiosRes.data;
-          user.albums.push(newAlbum);
+          user.albums.push(axiosRes.data);
           user.save((err) => {
             if (err) res.send(err);
             res.send('User updated')
           })
-        }).catch(err => console.log(err));
+        }).catch(err => {
+          console.log(err);
+          res.send(500);
+        });
       })
       // res.send('ok')
+    })
+    //Get album from user, body must have index of album
+    .get((req, res) => {
+      User.findById(req.params.user_id, (err, user) => {
+        if (err) res.send(err);
+        const { albIdx } = req.body;
+        axios.get(`${ROOT_URL}/albums/:album_id`).then(axiosRes => {
+          //gets a single album's data
+          res.send(axiosRes.data);
+        }).catch(err => {
+          console.log(err);
+          res.send(500);
+        });
+      });
     })
 
 //Basic User Stuff

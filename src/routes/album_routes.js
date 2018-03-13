@@ -1,5 +1,5 @@
 const AlbumSchema = require('../Schemas/AlbumSchema');
-const User = require('../Schemas/user');
+const User = require('../Schemas/UserSchema');
 
 module.exports = function (router) {
   router.route('/albums/')
@@ -12,14 +12,11 @@ module.exports = function (router) {
           res.send(newAlbum)
         });
     })
+    //Get/Read all albums
     .get((req, res) => {
-        User.findById(req.params.user_id, (err, user) => {
-          if (err) res.send(err);
-          console.log(user.albums[0])
-          AlbumSchema.findById(user.albums[0], (err, album) => {
-            if (err) res.send(err);
-            res.send(album);
-          });
-        });
+      AlbumSchema.find((err, users) => {
+        if (err) res.send(err);
+        res.json(users);
+      });
     })
 }
