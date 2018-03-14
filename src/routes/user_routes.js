@@ -1,14 +1,21 @@
-const User  = require('../Schemas/UserSchema');
-const axios = require('axios');
+import User from '../Schemas/UserSchema';
+import axios from 'axios';
 const { ROOT_URL } = require('../serverConfig');
+
+/*
+  The req.decoded.user_id is the decrypted user_id that we unecrypt in index.js
+  if is original encoded after a user authenticates themselves with their username
+  and password -> this encryption happens in auth.routes
+
+  short version  -> was using req.params.user_id, now uses req.decoded.user_id  
+*/
 
 module.exports = function (router) {
 //Intiate Album handlers for User then pass off to Album routes
-  router.route('/users/albums/:user_id')
+  router.route('/users/albums')
     //Create an album
     .post((req,res) => {
-      const { user_id } = req.params;
-      console.log(req.body)
+      const { user_id } = req.decoded;
       User.findById(user_id, (err, user) => {
         if (err) res.send(err);
         const { name, capacity } = req.body;
@@ -32,7 +39,7 @@ module.exports = function (router) {
     })
     //Get album from user, body must have index of album
     .get((req, res) => {
-      User.findById(req.params.user_id, (err, user) => {
+      User.findById(req.decoded.user_id, (err, user) => {
         if (err) res.send(err);
         const { albIdx } = req.body;
         axios.get(`${ROOT_URL}/albums/:album_id`).then(axiosRes => {
@@ -65,22 +72,21 @@ module.exports = function (router) {
     .get((req, res) => {
       User.find((err, users) => {
         if (err) res.send(err);
-
         res.json(users);
       })
     });
 
-  router.route('/users/:user_id')
+  router.route('/user/')
     //Get single User
     .get((req, res) => {
-      User.findById(req.params.user_id, (err, user) => {
+      User.findById(req.decoded.user_id, (err, user) => {
         if (err) res.send(err);
         res.send(user);
       })
     })
     //Update basic user info such as email, password, etc.
     .put((req, res) => {
-      User.findById(req.params.user_id, (err, user) => {
+      User.findById(req.decoded.user_id, (err, user) => {
         if (err) res.send(err);
         else {
           /* Update generic user data here */
@@ -88,7 +94,6 @@ module.exports = function (router) {
 
           user.save((err) => {
             if (err) res.send(err);
-
             res.json({ message: 'User updated' })
           })
         }
@@ -96,7 +101,7 @@ module.exports = function (router) {
     })
     //Delete a single user
     .delete((req, res) => {
-      User.remove({ _id: req.params.user_id }, (err, user) => {
+      User.remove({ _id: req.decoded.user_id }, (err, user) => {
         if (err) res.send(err);
         else res.json({ success: true });
       });

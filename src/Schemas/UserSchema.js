@@ -27,10 +27,7 @@ User.pre('save', function(next) {
   });
 });
 
-User.methods.comparePassword = (pass, cb) => {
-  bcrypt.compare(pass, this.password, (err, isMatch) => {
-    if (err) return false;
-    if (isMatch) return true;
-  });
+User.methods.comparePassword = function(pass, cb) {
+  bcrypt.compare(pass, this.password, (err, isMatch) => cb(err, isMatch));
 }
-module.exports = mongoose.model('User', User);
+export default mongoose.model('User', User);

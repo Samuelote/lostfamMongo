@@ -1,9 +1,9 @@
 const User = require('../Schemas/UserSchema');
 
 module.exports = function(router) {
-  router.route('/pics/:user_id')
+  router.route('/pics')
   .put((req, res) => {
-    User.findById(req.params.user_id, (err, user) => {
+    User.findById(req.decoded.user_id, (err, user) => {
       if (err) res.send(err);
       if (user.albums.length > 0) {
         user.albums.findOne({ name: req.body.albumName }, (err, album ) => {
