@@ -1,4 +1,5 @@
 import User from '../Schemas/UserSchema';
+import AlbumSchema from '../Schemas/AlbumSchema';
 import axios from 'axios';
 const { ROOT_URL } = require('../serverConfig');
 
@@ -7,12 +8,12 @@ const { ROOT_URL } = require('../serverConfig');
   if is original encoded after a user authenticates themselves with their username
   and password -> this encryption happens in auth.routes
 
-  short version  -> was using req.params.user_id, now uses req.decoded.user_id  
+  short version  -> was using req.params.user_id, now uses req.decoded.user_id
 */
 
 module.exports = function (router) {
 //Intiate Album handlers for User then pass off to Album routes
-  router.route('/users/albums')
+  router.route('/users/albums/')
     //Create an album
     .post((req,res) => {
       const { user_id } = req.decoded;
@@ -42,12 +43,31 @@ module.exports = function (router) {
       User.findById(req.decoded.user_id, (err, user) => {
         if (err) res.send(err);
         const { albIdx } = req.body;
-        axios.get(`${ROOT_URL}/albums/:album_id`).then(axiosRes => {
+        axios.get(`${ROOT_URL}/albums/${user.album[albIdx]}`).then(axiosRes => {
           //gets a single album's data
           res.send(axiosRes.data);
         }).catch(err => {
           console.log(err);
           res.send(500);
+        });
+      });
+    })
+    //delete album from user
+    .delete((req, res) => {
+      User.findById(req.decoded.user_id, (err, user) => {
+        if (err) res.send(err);
+        const { albIdx } = req.body;
+        AlbumSchema.remove({ _id: user.album[albIdx] }, (err, user) => {
+          if (err) res.send(err);
+          else {
+            user.albums.splice(albIdx, 1);
+            user.save(err => {
+              if (err) res.send(err);
+              else {
+                res.json({ success: true });
+              }
+            })
+          };
         });
       });
     })

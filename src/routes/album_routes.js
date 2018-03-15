@@ -14,9 +14,22 @@ module.exports = function (router) {
     })
     //Get/Read all albums
     .get((req, res) => {
-      AlbumSchema.find((err, users) => {
+      AlbumSchema.find((err, albums) => {
         if (err) res.send(err);
-        res.json(users);
+        res.json(albums);
       });
     })
+    //delete all albums for dev purpose
+    .delete((req, res) => {
+      AlbumSchema.find((err, albums) => {
+        if (err) res.send(err);
+        albums.forEach(album => {
+        AlbumSchema.remove({ _id: album._id }, (err) => {
+          if (err) res.send(err);
+        })
+      });
+      setTimeout(() => res.send("All Done"), 3000);
+    })
+  })
+
 }

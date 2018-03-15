@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 import express  from 'express';
 import morgan   from 'morgan';
 import jwt      from 'jsonwebtoken';
+import cors     from 'cors';
 import { urlencoded, json } from 'body-parser';
-const app      = express();
-
+const app = express();
 
 require('dotenv').config();
 mongoose.connect(`mongodb://${process.env.MONGOUSER}:${process.env.MONGOPASS}@ds263948.mlab.com:${process.env.MONGOPORT}/lostfam`);
@@ -13,6 +13,8 @@ app.set('secret', process.env.SUPERSECRET);
 app.use(urlencoded({ extended: true }));
 app.use(json());
 app.use(morgan('dev'));
+app.use(cors());
+app.options('*', cors());
 
 const port = process.env.PORT || 8080;
 
