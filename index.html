@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Routes Guide</title>
+</head>
+<style media="screen">
+  div {
+    border: 3px dashed lightblue
+  }
+  h2 {
+    margin-left: 2.5vw;
+  }
+  p {
+    margin-left: 5vw;
+  }
+</style>
+
+<body>
+  <div>
+    <h1>Auth</h1>
+    <h2><strong>Register</strong></h2>
+    <p>
+      <strong>Route:</strong>POST -> /api/register -> Sends back succes message.<br>
+      <strong>Reqs</strong>: name, email, username, password
+    </p>
+    <h2><strong>Login</strong></h2>
+    <p>
+      <strong>Route:</strong>POST -> /api/authenticate -> Sends back success message and token.<br>
+      <strong>Reqs</strong>: username, password
+    </p>
+  </div>
+  <div>
+    <h1>Users</h1>
+    <h2><strong>Get all Users</strong></h2>
+    <p>
+      <strong>Route:</strong>GET -> /api/users -> Sends Array of User objects.<br>
+      <strong>Reqs</strong>: User access token
+    </p>
+  </div>
+  <div>
+    <h1>Single User</h1>
+    <h2><strong>Get User</strong></h2>
+    <p>
+      <strong>Route:</strong>GET -> /api/user -> Sends Back user data<br>
+      <strong>Reqs</strong>: User acess token.
+    </p>
+    <h2><strong>Update Something</strong></h2>
+    <p>
+      <strong>Route:</strong>PUT -> /api/user -> Sends back succes message *Note: This doesnt do anything yet..<br>
+      <strong>Reqs</strong>: User acess token.
+    </p>
+    <h2><strong>Delete</strong></h2>
+    <p>
+      <strong>Route:</strong>DELETE -> /api/user -> Sends back succes message<br>
+      <strong>Reqs</strong>: User acess token.
+    </p>
+  </div>
+  <div>
+    <h1>Albums</h1>
+    <h2><strong>Get All</strong></h2>
+    <p>
+      <strong>Route:</strong>GET -> /api/albums -> Sends Back user data<br>
+      <strong>Reqs</strong>: User acess token.
+    </p>
+    <h2><strong>Delete All</strong></h2>
+    <p>
+      Dev purposes only. Will be removed later
+      <strong>Route:</strong>DELETE -> /api/albums -> Sends success message<br>
+      <strong>Reqs</strong>: User acess token.
+    </p>
+  </div>
+  <div>
+    <h1>Albums under User</h1>
+    <h2><strong>Create new</strong></h2>
+    <p>
+      <strong>Route:</strong>POST -> /api/users/albums -> Sends success message<br>
+      <strong>Reqs</strong>: User acess token, name, capacity
+    </p>
+    <h2><strong>Get One</strong></h2>
+    <p>
+      <strong>Route:</strong>GET -> /api/users/albums -> Sends Back album data<br>
+      <strong>Reqs</strong>: User acess token, indexOf album in albums array *Note: will be synonomous with creation order
+    </p>
+    <h2><strong>Delete One</strong></h2>
+    <p>
+      <strong>Route:</strong>DELETE -> /api/users/albums -> Sends Succes Message<br>
+      <strong>Reqs</strong>: User acess token, indexOf album in albums array *Note: will be synonomous with creation order
+    </p>
+  </div>
+</body>
+
+</html>

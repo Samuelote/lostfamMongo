@@ -4,6 +4,7 @@ import morgan   from 'morgan';
 import jwt      from 'jsonwebtoken';
 import cors     from 'cors';
 import { urlencoded, json } from 'body-parser';
+const path = require('path');
 const app = express();
 
 require('dotenv').config();
@@ -49,7 +50,9 @@ require('./routes/album_routes')(router);
 require('./routes/user_routes')(router);
 require('./routes/pics_routes')(router);
 
-
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve('./index.html'));
+})
 app.use('/api', router);
 
 app.listen(port);

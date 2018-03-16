@@ -74,20 +74,6 @@ module.exports = function (router) {
 
 //Basic User Stuff
   router.route('/users')
-    //Create a new User
-    .post((req, res) => {
-      const { name, email, username, password } = req.body;
-      const newUser = new User({ name, email, username, password, created_at: Date.now() });
-      newUser.save(err => {
-        if (err) {
-          console.log(err);
-          res.send({ success: false });
-        } else {
-          console.log('New user has been created.')
-          res.send({ success: true });
-        }
-      })
-    })
     //Get all Users
     .get((req, res) => {
       User.find((err, users) => {

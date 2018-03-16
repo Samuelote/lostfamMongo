@@ -29,4 +29,20 @@ module.exports = function (app, router) {
         }
       });
     });
+
+  router.route('/register')
+    //Create a new User
+    .post((req, res) => {
+      const { name, email, username, password } = req.body;
+      const newUser = new UserSchema({ name, email, username, password, created_at: Date.now() });
+      newUser.save(err => {
+        if (err) {
+          console.log(err);
+          res.send({ success: false });
+        } else {
+          console.log('New user has been created.')
+          res.send({ success: true });
+        }
+      })
+  })
 }
