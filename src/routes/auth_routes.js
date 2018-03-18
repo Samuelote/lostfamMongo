@@ -33,7 +33,7 @@ module.exports = function (app, router) {
   router.route('/register')
     //Create a new User
     .post((req, res) => {
-      const { name, email, username, password } = req.body;
+      const { name, email, username, password } = req.body.form;
       const newUser = new UserSchema({ name, email, username, password, created_at: Date.now() });
       newUser.save(err => {
         if (err) {
