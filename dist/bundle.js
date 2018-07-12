@@ -2,9 +2,6 @@
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
-/******/ 	// object to store loaded and loading wasm modules
-/******/ 	var installedWasmModules = {};
-/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
@@ -39,17 +36,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -66,9 +78,6 @@
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// object with all compiled WebAssembly.Modules
-/******/ 	__webpack_require__.w = {};
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -109,7 +118,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _mongoose = __webpack_require__(/*! mongoose */ \"mongoose\");\n\nvar _mongoose2 = _interopRequireDefault(_mongoose);\n\nvar _express = __webpack_require__(/*! express */ \"express\");\n\nvar _express2 = _interopRequireDefault(_express);\n\nvar _morgan = __webpack_require__(/*! morgan */ \"morgan\");\n\nvar _morgan2 = _interopRequireDefault(_morgan);\n\nvar _jsonwebtoken = __webpack_require__(/*! jsonwebtoken */ \"jsonwebtoken\");\n\nvar _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);\n\nvar _cors = __webpack_require__(/*! cors */ \"cors\");\n\nvar _cors2 = _interopRequireDefault(_cors);\n\nvar _bodyParser = __webpack_require__(/*! body-parser */ \"body-parser\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar path = __webpack_require__(/*! path */ \"path\");\nvar app = (0, _express2.default)();\n\n__webpack_require__(/*! dotenv */ \"dotenv\").config();\n_mongoose2.default.connect('mongodb://' + process.env.MONGOUSER + ':' + process.env.MONGOPASS + '@ds263948.mlab.com:' + process.env.MONGOPORT + '/lostfam');\napp.set('secret', process.env.SUPERSECRET);\n\napp.use((0, _bodyParser.urlencoded)({ extended: true }));\napp.use((0, _bodyParser.json)());\napp.use((0, _morgan2.default)('dev'));\napp.use((0, _cors2.default)());\napp.options('*', (0, _cors2.default)());\n\nvar port = process.env.PORT || 8080;\n\nvar router = _express2.default.Router();\n\n//auth routes must come first because if we check for tokens we wont be able to get any\n__webpack_require__(/*! ./routes/auth_routes */ \"./routes/auth_routes.js\")(app, router);\n\nrouter.use(function (req, res, next) {\n  var token = req.body.token || req.query.token || req.headers['x-access-token'];\n  if (token) {\n    //verify with web token to get encrpyted data\n    _jsonwebtoken2.default.verify(token, app.get('secret'), function (err, decoded) {\n      if (err) {\n        return res.json({ success: false, message: 'Failed to authenticate token.' });\n      } else {\n        console.log(decoded);\n        req.decoded = decoded;\n        next();\n      }\n    });\n  } else {\n    return res.status(403).send({\n      success: false,\n      message: 'No token provided.'\n    });\n  }\n});\n\n/* Routes */\n__webpack_require__(/*! ./routes/album_routes */ \"./routes/album_routes.js\")(router);\n__webpack_require__(/*! ./routes/user_routes */ \"./routes/user_routes.js\")(router);\n__webpack_require__(/*! ./routes/pics_routes */ \"./routes/pics_routes.js\")(router);\n\napp.get('/', function (req, res) {\n  res.sendFile(path.resolve('./index.html'));\n});\napp.use('/api', router);\n\napp.listen(port);\nconsole.log('Magic happens on port ' + port);\n\n//# sourceURL=webpack:///./index.js?");
+eval("\n\nvar _mongoose = __webpack_require__(/*! mongoose */ \"mongoose\");\n\nvar _mongoose2 = _interopRequireDefault(_mongoose);\n\nvar _express = __webpack_require__(/*! express */ \"express\");\n\nvar _express2 = _interopRequireDefault(_express);\n\nvar _morgan = __webpack_require__(/*! morgan */ \"morgan\");\n\nvar _morgan2 = _interopRequireDefault(_morgan);\n\nvar _jsonwebtoken = __webpack_require__(/*! jsonwebtoken */ \"jsonwebtoken\");\n\nvar _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);\n\nvar _cors = __webpack_require__(/*! cors */ \"cors\");\n\nvar _cors2 = _interopRequireDefault(_cors);\n\nvar _bodyParser = __webpack_require__(/*! body-parser */ \"body-parser\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar path = __webpack_require__(/*! path */ \"path\");\nvar app = (0, _express2.default)();\n\n__webpack_require__(/*! dotenv */ \"dotenv\").config();\nvar db = 'mongodb://' + process.env.MONGOUSER + ':' + process.env.MONGOPASS + '@ds263948.mlab.com:' + process.env.MONGOPORT + '/lostfam';\n_mongoose2.default.connect(db, { useNewUrlParser: true }).then(function () {\n  return console.log('Successful Connection');\n}).catch(function (err) {\n  return console.error('Database connection error: ', err);\n});\n\napp.set('secret', process.env.SUPERSECRET);\n\napp.use((0, _bodyParser.urlencoded)({ extended: true }));\napp.use((0, _bodyParser.json)());\napp.use((0, _morgan2.default)('dev'));\napp.use((0, _cors2.default)());\napp.options('*', (0, _cors2.default)());\n\nvar port = process.env.PORT || 8080;\n\nvar router = _express2.default.Router();\n\n//auth routes must come first because if we check for tokens we wont be able to get any\n__webpack_require__(/*! ./routes/auth_routes */ \"./routes/auth_routes.js\")(app, router);\n\nrouter.use(function (req, res, next) {\n  console.log('this hasnt run yet');\n  var token = req.body.token || req.query.token || req.headers['x-access-token'];\n  // console.log(next);\n  next();\n\n  // uncomment this for token verification on every api call\n  if (token) {\n    //verify with web token to get encrpyted data\n    _jsonwebtoken2.default.verify(token, app.get('secret'), function (err, decoded) {\n      if (err) {\n        return res.json({ success: false, message: 'Failed to authenticate token.' });\n      } else {\n        console.log(decoded);\n        req.decoded = decoded;\n        next();\n      }\n    });\n  } else {\n    return res.status(403).send({\n      success: false,\n      message: 'No pomcer provided.'\n    });\n  }\n});\n\n/* Routes */\n__webpack_require__(/*! ./routes/album_routes */ \"./routes/album_routes.js\")(router);\n__webpack_require__(/*! ./routes/user_routes */ \"./routes/user_routes.js\")(router);\n__webpack_require__(/*! ./routes/pics_routes */ \"./routes/pics_routes.js\")(router);\n\napp.get('/', function (req, res) {\n  res.sendFile(path.resolve('./index.html'));\n});\napp.use('/api', router);\n\napp.listen(port);\nconsole.log('Run yarn dev:server and yarn start to update...Port ' + port);\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ }),
 
@@ -121,7 +130,7 @@ eval("\n\nvar _mongoose = __webpack_require__(/*! mongoose */ \"mongoose\");\n\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar AlbumSchema = __webpack_require__(/*! ../Schemas/AlbumSchema */ \"./Schemas/AlbumSchema.js\");\nvar User = __webpack_require__(/*! ../Schemas/UserSchema */ \"./Schemas/UserSchema.js\");\n\nmodule.exports = function (router) {\n  router.route('/albums/').post(function (req, res) {\n    var _req$body = req.body,\n        name = _req$body.name,\n        capacity = _req$body.capacity,\n        user_id = _req$body.user_id;\n\n    if (!user_id) res.send(\"No user was found.\");\n    var newAlbum = new AlbumSchema({ name: name, created_at: Date.now(), capacity: capacity });\n    newAlbum.save(function (err) {\n      if (err) res.send({ AlbumSuccess: false, err: err });\n      res.send(newAlbum);\n    });\n  })\n  //Get/Read all albums\n  .get(function (req, res) {\n    AlbumSchema.find(function (err, albums) {\n      if (err) res.send(err);\n      res.json(albums);\n    });\n  })\n  //delete all albums for dev purpose\n  .delete(function (req, res) {\n    AlbumSchema.find(function (err, albums) {\n      if (err) res.send(err);\n      albums.forEach(function (album) {\n        AlbumSchema.remove({ _id: album._id }, function (err) {\n          if (err) res.send(err);\n        });\n      });\n      setTimeout(function () {\n        return res.send(\"All Done\");\n      }, 3000);\n    });\n  });\n};\n\n//# sourceURL=webpack:///./routes/album_routes.js?");
+eval("\n\nvar AlbumSchema = __webpack_require__(/*! ../Schemas/AlbumSchema */ \"./Schemas/AlbumSchema.js\");\nvar User = __webpack_require__(/*! ../Schemas/UserSchema */ \"./Schemas/UserSchema.js\");\n\nmodule.exports = function (router) {\n  router.route('/albums/').post(function (req, res) {\n    console.log(\"mongo fired add album\");\n    var _req$body = req.body,\n        name = _req$body.name,\n        capacity = _req$body.capacity,\n        user_id = _req$body.user_id;\n\n    if (!user_id) res.send(\"No user was found.\");\n    var newAlbum = new AlbumSchema({ name: name, created_at: Date.now(), capacity: capacity });\n    newAlbum.save(function (err) {\n      if (err) res.send({ AlbumSuccess: false, err: err });\n      res.send(newAlbum);\n    });\n  })\n  //Get/Read all albums\n  .get(function (req, res) {\n    AlbumSchema.find(function (err, albums) {\n      if (err) res.send(err);\n      res.json(albums);\n    });\n  })\n  //delete all albums for dev purpose\n  .delete(function (req, res) {\n    AlbumSchema.find(function (err, albums) {\n      if (err) res.send(err);\n      albums.forEach(function (album) {\n        AlbumSchema.remove({ _id: album._id }, function (err) {\n          if (err) res.send(err);\n        });\n      });\n      setTimeout(function () {\n        return res.send(\"All Done\");\n      }, 3000);\n    });\n  });\n};\n\n//# sourceURL=webpack:///./routes/album_routes.js?");
 
 /***/ }),
 
@@ -133,7 +142,7 @@ eval("\n\nvar AlbumSchema = __webpack_require__(/*! ../Schemas/AlbumSchema */ \"
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _UserSchema = __webpack_require__(/*! ../Schemas/UserSchema */ \"./Schemas/UserSchema.js\");\n\nvar _UserSchema2 = _interopRequireDefault(_UserSchema);\n\nvar _jsonwebtoken = __webpack_require__(/*! jsonwebtoken */ \"jsonwebtoken\");\n\nvar _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nmodule.exports = function (app, router) {\n  router.route('/authenticate').post(function (req, res) {\n    var _req$body = req.body,\n        username = _req$body.username,\n        password = _req$body.password;\n\n    _UserSchema2.default.findOne({ username: username }, function (err, user) {\n      if (err) throw err;\n      if (!user) res.json({ success: false, message: \"Authentication Failed. User not found.\" });else {\n        //if everything went good, check password with bcrypt method defined in UserSchema\n        user.comparePassword(password, function (err, isMatch) {\n          if (err) throw err;\n          if (!isMatch) res.json({ success: false, message: \"Authentication Failed. Incorrect username or password.\" });else {\n            var payload = { user_id: user._id };\n            var token = _jsonwebtoken2.default.sign(payload, app.get('secret'), {\n              expiresIn: 60 * 1440 * 30 * 3 //expires in 90 days\n            });\n\n            res.json({\n              success: true,\n              message: 'Token Granted.',\n              token: token\n            });\n          }\n        });\n      }\n    });\n  });\n\n  router.route('/register')\n  //Create a new User\n  .post(function (req, res) {\n    var _req$body2 = req.body,\n        name = _req$body2.name,\n        email = _req$body2.email,\n        username = _req$body2.username,\n        password = _req$body2.password;\n\n    var newUser = new _UserSchema2.default({ name: name, email: email, username: username, password: password, created_at: Date.now() });\n    newUser.save(function (err) {\n      if (err) {\n        console.log(err);\n        res.send({ success: false });\n      } else {\n        console.log('New user has been created.');\n        res.send({ success: true });\n      }\n    });\n  });\n};\n\n//# sourceURL=webpack:///./routes/auth_routes.js?");
+eval("\n\nvar _UserSchema = __webpack_require__(/*! ../Schemas/UserSchema */ \"./Schemas/UserSchema.js\");\n\nvar _UserSchema2 = _interopRequireDefault(_UserSchema);\n\nvar _jsonwebtoken = __webpack_require__(/*! jsonwebtoken */ \"jsonwebtoken\");\n\nvar _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nmodule.exports = function (app, router) {\n  // console.log(router.route('/authenticate').pomc);\n  router.post('/authenticate', function (req, res) {\n    console.log('line 10 in auth routes.js');\n    var _req$body = req.body,\n        username = _req$body.username,\n        password = _req$body.password;\n\n    _UserSchema2.default.findOne({ username: username }, function (err, user) {\n      if (err) throw err;\n      if (!user) res.json({ success: false, message: \"Authentication Failed. User not found.\" });else {\n        //if everything went good, check password with bcrypt method defined in UserSchema\n        user.comparePassword(password, function (err, isMatch) {\n          if (err) throw err;\n          if (!isMatch) res.json({ success: false, message: \"Authentication Failed. Incorrect username or password.\" });else {\n            var payload = { user_id: user._id };\n            var token = _jsonwebtoken2.default.sign(payload, app.get('secret'), {\n              expiresIn: 60 * 1440 * 30 * 3 //expires in 90 days\n            });\n\n            res.json({\n              success: true,\n              message: 'Token Granted.',\n              token: token\n            });\n          }\n        });\n      }\n    });\n  });\n\n  router.route('/register')\n\n  //Create a new User\n  .post(function (req, res) {\n    var _req$body2 = req.body,\n        name = _req$body2.name,\n        email = _req$body2.email,\n        username = _req$body2.username,\n        password = _req$body2.password;\n\n    var newUser = new _UserSchema2.default({ name: name, email: email, username: username, password: password, created_at: Date.now() });\n    newUser.save(function (err) {\n      if (err) {\n        console.log(err);\n        res.send({ success: false });\n      } else {\n        console.log('New user has been created.');\n        res.send({ success: true });\n      }\n    });\n  });\n};\n\n//# sourceURL=webpack:///./routes/auth_routes.js?");
 
 /***/ }),
 

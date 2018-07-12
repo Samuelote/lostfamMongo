@@ -4,6 +4,7 @@ const User = require('../Schemas/UserSchema');
 module.exports = function (router) {
   router.route('/albums/')
     .post((req, res) => {
+        console.log("mongo fired add album");
         const { name, capacity, user_id } = req.body;
         if (!user_id) res.send("No user was found.");
         const newAlbum = new AlbumSchema({ name, created_at: Date.now(), capacity });

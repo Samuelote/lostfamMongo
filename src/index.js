@@ -5,10 +5,28 @@ import jwt      from 'jsonwebtoken';
 import cors     from 'cors';
 import { urlencoded, json } from 'body-parser';
 const path = require('path');
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const app = express();
 
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(_dirname, 'ssl', 'server.crt')),
+  key: fs.readFileSync(path.join(_dirname, 'ssl', 'server.key'))
+}
+
+
+
+
+
+
+
 require('dotenv').config();
-mongoose.connect(`mongodb://${process.env.MONGOUSER}:${process.env.MONGOPASS}@ds263948.mlab.com:${process.env.MONGOPORT}/lostfam`);
+const db = `mongodb://${process.env.MONGOUSER}:${process.env.MONGOPASS}@ds263948.mlab.com:${process.env.MONGOPORT}/lostfam`;
+mongoose.connect(db, { useNewUrlParser: true })
+.then(()=>console.log('Successful Connection'))
+.catch(err => console.error('Database connection error: ', err))
+
 app.set('secret', process.env.SUPERSECRET);
 
 app.use(urlencoded({ extended: true }));
@@ -25,7 +43,14 @@ const router = express.Router();
 require('./routes/auth_routes')(app, router);
 
 router.use((req, res, next) => {
+  console.log('this hasnt run yet');
   let token = req.body.token || req.query.token || req.headers['x-access-token'];
+  // console.log(next);
+  next();
+
+
+
+// uncomment this for token verification on every api call
   if (token) {
     //verify with web token to get encrpyted data
     jwt.verify(token, app.get('secret'), (err, decoded) => {
@@ -56,4 +81,8 @@ app.get('/', (req, res) => {
 app.use('/api', router);
 
 app.listen(port);
-console.log('Magic happens on port ' + port);
+// I NEED TO CREATE A CRT AND KEY FILE. LOOK IT UP.
+https.createServer(httpsOptions, app).listen(port, ()=>{
+  console.log('serving the');
+});
+console.log('Run yarn dev:server and yarn start to update...Port ' + port);

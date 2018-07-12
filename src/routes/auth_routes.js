@@ -2,8 +2,9 @@ import UserSchema from '../Schemas/UserSchema';
 import jwt from 'jsonwebtoken';
 
 module.exports = function (app, router) {
-  router.route('/authenticate')
-    .post((req, res) => {
+  // console.log(router.route('/authenticate').pomc);
+  router.post('/authenticate', (req, res) => {
+      console.log('line 10 in auth routes.js');
       const { username, password } = req.body;
       UserSchema.findOne({ username }, (err, user) => {
         if (err) throw err;
@@ -31,6 +32,7 @@ module.exports = function (app, router) {
     });
 
   router.route('/register')
+
     //Create a new User
     .post((req, res) => {
       const { name, email, username, password } = req.body;
