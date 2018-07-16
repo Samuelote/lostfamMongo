@@ -10,10 +10,19 @@ const https = require('https');
 const fs = require('fs');
 const app = express();
 
-const httpsOptions = {
-  cert: fs.readFileSync(path.join(_dirname, 'ssl', 'server.crt')),
-  key: fs.readFileSync(path.join(_dirname, 'ssl', 'server.key'))
-}
+//HTTPS SERVER THAT KINDA WORKS
+
+// var server = express();
+// server.get('/', function (req, res) {
+//     res.send("Hello World!");
+// });
+// const httpsOptions = {
+//   key: fs.readFileSync('./key.pem'),
+//   cert: fs.readFileSync('./cert.pem'),
+//   passphrase: '83815Mso'
+// }
+// https.createServer(httpsOptions, server).listen(8000)
+
 
 
 
@@ -82,7 +91,4 @@ app.use('/api', router);
 
 app.listen(port);
 // I NEED TO CREATE A CRT AND KEY FILE. LOOK IT UP.
-https.createServer(httpsOptions, app).listen(port, ()=>{
-  console.log('serving the');
-});
 console.log('Run yarn dev:server and yarn start to update...Port ' + port);
