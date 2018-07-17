@@ -52,7 +52,6 @@ const router = express.Router();
 require('./routes/auth_routes')(app, router);
 
 router.use((req, res, next) => {
-  console.log('this hasnt run yet');
   let token = req.body.token || req.query.token || req.headers['x-access-token'];
   // console.log(next);
   next();

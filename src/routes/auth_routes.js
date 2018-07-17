@@ -4,11 +4,10 @@ import jwt from 'jsonwebtoken';
 module.exports = function (app, router) {
   // console.log(router.route('/authenticate').pomc);
   router.post('/authenticate', (req, res) => {
-      console.log('line 10 in auth routes.js');
       const { username, password } = req.body;
-      UserSchema.findOne({ username }, (err, user) => {
+      UserSchema.findOne({ email: username.toLowerCase() }, (err, user) => {
         if (err) throw err;
-        if (!user) res.json({ success: false, message: "Authentication Failed. User not found." });
+        if (!user) res.json({ success: false, message: "Authentication Failed. Invalid email." });
         else {
           //if everything went good, check password with bcrypt method defined in UserSchema
           user.comparePassword(password, (err, isMatch) => {
