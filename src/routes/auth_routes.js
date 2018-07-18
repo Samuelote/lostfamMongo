@@ -2,17 +2,17 @@ import UserSchema from '../Schemas/UserSchema';
 import jwt from 'jsonwebtoken';
 
 module.exports = function (app, router) {
-  // console.log(router.route('/authenticate').pomc);
+
   router.post('/authenticate', (req, res) => {
-      const { username, password } = req.body;
-      UserSchema.findOne({ email: username.toLowerCase() }, (err, user) => {
+      const { email, password } = req.body;
+      UserSchema.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (err) throw err;
         if (!user) res.json({ success: false, message: "Authentication Failed. Invalid email." });
         else {
           //if everything went good, check password with bcrypt method defined in UserSchema
           user.comparePassword(password, (err, isMatch) => {
             if(err) throw err;
-            if (!isMatch) res.json({ success: false, message: "Authentication Failed. Incorrect username or password." });
+            if (!isMatch) res.json({ success: false, message: "Authentication Failed. Incorrect email or password." });
             else {
               const payload = { user_id: user._id };
               const token = jwt.sign(payload, app.get('secret'), {
@@ -35,16 +35,22 @@ module.exports = function (app, router) {
     //Create a new User
     .post((req, res) => {
       console.log(req.body.values);
-      const { name, email, username, password } = req.body.values;
-      const newUser = new UserSchema({ name, email, username, password, created_at: Date.now() });
-      newUser.save(err => {
-        if (err) {
-          console.log(err);
-          res.send({ success: false });
-        } else {
-          console.log('New user has been created.')
-          res.send({ success: true });
-        }
-      })
+      const { email, password } = req.body.values;
+      let duplicate = false;
+      UserSchema.findOne({ email: email.toLowerCase() },()=>{duplicate=true});
+      if (!duplicate){
+        const newUser = new UserSchema({ email, password, created_at: Date.now() });
+        newUser.save(err => {
+          console.log('pomcer');
+          if (err) {
+            console.log(err);
+            name: String,
+            res.send({ success: false, message: 'Try again. Error Occurred.' });
+          } else {
+            console.log('New user has been created.')
+            res.send({ success: true });
+          }
+        })
+      }
   })
 }

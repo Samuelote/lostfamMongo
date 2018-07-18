@@ -4,9 +4,7 @@ const bcrypt   = require('bcryptjs');
 const AlbumSchema = require('./AlbumSchema');
 
 const User = new Schema({
-  name: String,
   email: String,
-  username: { type:String, required: true, index: { unique: true }},
   password: { type:String, required: true },
   created_at: Date,
   albums:[{ type: mongoose.Schema.Types.ObjectId, ref: 'AlbumSchema' }]

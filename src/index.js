@@ -9,28 +9,9 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const app = express();
-
-//HTTPS SERVER THAT KINDA WORKS
-
-// var server = express();
-// server.get('/', function (req, res) {
-//     res.send("Hello World!");
-// });
-// const httpsOptions = {
-//   key: fs.readFileSync('./key.pem'),
-//   cert: fs.readFileSync('./cert.pem'),
-//   passphrase: '83815Mso'
-// }
-// https.createServer(httpsOptions, server).listen(8000)
-
-
-
-
-
-
-
-
 require('dotenv').config();
+
+
 const db = `mongodb://${process.env.MONGOUSER}:${process.env.MONGOPASS}@ds263948.mlab.com:${process.env.MONGOPORT}/lostfam`;
 mongoose.connect(db, { useNewUrlParser: true })
 .then(()=>console.log('Successful Connection'))
@@ -89,5 +70,4 @@ app.get('/', (req, res) => {
 app.use('/api', router);
 
 app.listen(port);
-// I NEED TO CREATE A CRT AND KEY FILE. LOOK IT UP.
-console.log('Run yarn dev:server and yarn start to update...Port ' + port);
+console.log('Run yarn `dev:server` and `yarn start` to update...Port ' + port);
