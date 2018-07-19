@@ -17,6 +17,7 @@ mongoose.connect(db, { useNewUrlParser: true })
 .then(()=>console.log('Successful Connection'))
 .catch(err => console.error('Database connection error: ', err))
 
+
 app.set('secret', process.env.SUPERSECRET);
 
 app.use(urlencoded({ extended: true }));
@@ -38,8 +39,6 @@ router.use((req, res, next) => {
   next();
 
 
-
-// uncomment this for token verification on every api call
   if (token) {
     //verify with web token to get encrpyted data
     jwt.verify(token, app.get('secret'), (err, decoded) => {

@@ -1,6 +1,7 @@
 import UserSchema from '../Schemas/UserSchema';
 import jwt from 'jsonwebtoken';
 
+
 module.exports = function (app, router) {
 
   router.post('/authenticate', (req, res) => {
@@ -34,23 +35,27 @@ module.exports = function (app, router) {
 
     //Create a new User
     .post((req, res) => {
-      console.log(req.body.values);
       const { email, password } = req.body.values;
-      let duplicate = false;
-      UserSchema.findOne({ email: email.toLowerCase() },()=>{duplicate=true});
-      if (!duplicate){
-        const newUser = new UserSchema({ email, password, created_at: Date.now() });
-        newUser.save(err => {
-          console.log('pomcer');
-          if (err) {
-            console.log(err);
-            name: String,
-            res.send({ success: false, message: 'Try again. Error Occurred.' });
-          } else {
-            console.log('New user has been created.')
-            res.send({ success: true });
-          }
-        })
-      }
-  })
+      UserSchema.findOne({ email: email.toLowerCase() },(err, user)=>{
+        if (err) res.send({success: false, message: 'Unkown error occurred.'});
+        if (!user){
+          const newUser = new UserSchema({ email, password, created_at: Date.now() });
+          newUser.save(err => {
+            console.log('pomcer');
+            if (err) {
+              console.log(err);
+              name: String,
+              res.send({ success: false, message: `Try again. Error occurred` });
+            } else {
+              console.log('New user has been created.')
+              res.send({ success: true });
+            }
+          })
+
+        }
+        else {
+          res.send({success: false, message: 'Another user has already registered with that email.'})
+        }
+      });
+  });
 }
