@@ -1,6 +1,7 @@
 import User from '../Schemas/UserSchema';
 import AlbumSchema from '../Schemas/AlbumSchema';
 import axios from 'axios';
+const mongoose = require('mongoose');
 const { ROOT_URL } = require('../serverConfig');
 
 /*
@@ -16,26 +17,28 @@ module.exports = function (router) {
   router.route('/users/albums/')
     //Create an album
     .post((req,res) => {
-      const { user_id } = req.decoded;
-      User.findById(user_id, (err, user) => {
-        if (err) res.send(err);
-        const { name, capacity } = req.body;
-        axios.post(`${ROOT_URL}/api/albums`, {
-          name,
-          capacity,
-          user_id
-        }).then(axiosRes => {
-        //Gets the newly created AlbumSchema's id
-          user.albums.push(axiosRes.data);
-          user.save((err) => {
-            if (err) res.send(err);
-            res.send('User updated')
-          })
-        }).catch(err => {
-          console.log(err);
-          res.send(500);
-        });
-      })
+      // console.log(mongoose.Types.ObjectId);
+      // const { user_id } = req.body.values;
+      // User.findById(user_id, (err, user) => {
+        // console.log(err);
+        // if (err) res.send(err);
+        // const { name, capacity } = req.body;
+        // axios.post(`${ROOT_URL}/api/albums`, {
+        //   name,
+        //   capacity,
+        //   user_id
+        // }).then(axiosRes => {
+        // //Gets the newly created AlbumSchema's id
+        //   user.albums.push(axiosRes.data);
+        //   user.save((err) => {
+        //     if (err) res.send(err);
+        //     res.send('User updated')
+        //   })
+        // }).catch(err => {
+        //   console.log('Erorr:', err);
+        //   res.send(500);
+        // });
+      // })
       // res.send('ok')
     })
     //Get album from user, body must have index of album
