@@ -19,7 +19,6 @@ module.exports = function (app, router) {
               const token = jwt.sign(payload, app.get('secret'), {
                 expiresIn: 60 * 1440 * 30 * 3 //expires in 90 days
               });
-
               res.json({
                 success: true,
                 message: 'Token Granted.',

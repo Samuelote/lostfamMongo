@@ -1,5 +1,6 @@
 import User from '../Schemas/UserSchema';
 import AlbumSchema from '../Schemas/AlbumSchema';
+import jwt from 'jsonwebtoken';
 import axios from 'axios';
 const mongoose = require('mongoose');
 const { ROOT_URL } = require('../serverConfig');
@@ -17,33 +18,33 @@ module.exports = function (router) {
   router.route('/users/albums/')
     //Create an album
     .post((req,res) => {
-      // console.log(mongoose.Types.ObjectId);
-      // const { user_id } = req.body.values;
-      // User.findById(user_id, (err, user) => {
-        // console.log(err);
-        // if (err) res.send(err);
-        // const { name, capacity } = req.body;
-        // axios.post(`${ROOT_URL}/api/albums`, {
-        //   name,
-        //   capacity,
-        //   user_id
-        // }).then(axiosRes => {
-        // //Gets the newly created AlbumSchema's id
-        //   user.albums.push(axiosRes.data);
-        //   user.save((err) => {
-        //     if (err) res.send(err);
-        //     res.send('User updated')
-        //   })
-        // }).catch(err => {
-        //   console.log('Erorr:', err);
-        //   res.send(500);
-        // });
-      // })
+      const { user_id } = req.decoded;
+      User.findById(user_id, (err, user) => {
+        if (err) res.send(err);
+        const { name, capacity } = req.body.values;
+        console.log(name,capacity, user_id);
+        axios.post(`${ROOT_URL}/api/albums`, {
+          name,
+          capacity,
+          user_id,
+          fromServer: true
+        }).then(axiosRes => {
+        //Gets the newly created AlbumSchema's id
+            user.save((err) => {
+            user.albums.push(axiosRes.data);
+            if (err) res.send(err);
+            res.send('User updated')
+          })
+        }).catch(err => {
+          // console.log('Erorr:', err);
+          // res.sendStatus(500);
+        });
+      })
       // res.send('ok')
     })
     //Get album from user, body must have index of album
     .get((req, res) => {
-      User.findById(req.decoded.user_id, (err, user) => {
+      User.findById(req.body.user_id, (err, user) => {
         if (err) res.send(err);
         const { albIdx } = req.body;
         axios.get(`${ROOT_URL}/albums/${user.album[albIdx]}`).then(axiosRes => {

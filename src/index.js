@@ -34,18 +34,20 @@ const router = express.Router();
 require('./routes/auth_routes')(app, router);
 
 router.use((req, res, next) => {
-  let token = req.body.token || req.query.token || req.headers['x-access-token'];
-  // console.log(next);
-  next();
-
+  const user_id = req.body.values ? req.body.values.user_id : undefined;
+  //determines if call was made from server or from client
+  if (req.body.fromServer){
+    return next();
+  }
+  let token = user_id || req.body.user_id || req.query.user_id || req.headers['x-access-token'];
 
   if (token) {
     //verify with web token to get encrpyted data
     jwt.verify(token, app.get('secret'), (err, decoded) => {
+      // console.log(err);
       if (err) {
         return res.json({ success: false, message: 'Failed to authenticate token.' });
       } else {
-        console.log(decoded);
         req.decoded = decoded;
         next();
       }
@@ -59,8 +61,8 @@ router.use((req, res, next) => {
 });
 
 /* Routes */
-require('./routes/album_routes')(router);
 require('./routes/user_routes')(router);
+require('./routes/album_routes')(router);
 require('./routes/pics_routes')(router);
 
 app.get('/', (req, res) => {
