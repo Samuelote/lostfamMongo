@@ -22,57 +22,58 @@ module.exports = function (router) {
       User.findById(user_id, (err, user) => {
         if (err) res.send(err);
         const { name, capacity } = req.body.values;
-        console.log(name,capacity, user_id);
         axios.post(`${ROOT_URL}/api/albums`, {
           name,
           capacity,
           user_id,
           fromServer: true
         }).then(axiosRes => {
-        //Gets the newly created AlbumSchema's id
-            user.save((err) => {
-            user.albums.push(axiosRes.data);
-            if (err) res.send(err);
-            res.send('User updated')
-          })
+          // console.log(axiosRes.data);
+          //pushes new album into user schema
+          const { data: {_id, user_id, name, created_at, capacity, pics, _v} } = axiosRes;
+          // console.log(_id, user_id, name, created_at, capacity, pics, _v);
+          User.update(
+            {_id: user_id},
+            { $push: {"albums": {_id, user_id, name, created_at, capacity, pics, _v} }},
+            {safe: true, upsert: true}, ()=>console.log(user.albums)
+          )
+
         }).catch(err => {
-          // console.log('Erorr:', err);
-          // res.sendStatus(500);
+          console.log('Error from user_routes:', err);
+          res.sendStatus(500);
         });
       })
-      // res.send('ok')
     })
     //Get album from user, body must have index of album
     .get((req, res) => {
-      User.findById(req.body.user_id, (err, user) => {
+      let albums;
+      User.findById(req.decoded.user_id, (err, user) => {
         if (err) res.send(err);
-        const { albIdx } = req.body;
-        axios.get(`${ROOT_URL}/albums/${user.album[albIdx]}`).then(axiosRes => {
-          //gets a single album's data
-          res.send(axiosRes.data);
-        }).catch(err => {
-          console.log(err);
-          res.send(500);
-        });
+        const { albIdx } = req.query;
+        albums = user.albums;
+        res.json( albums )
       });
     })
     //delete album from user
     .delete((req, res) => {
-      User.findById(req.decoded.user_id, (err, user) => {
+      const { user_id } = req.decoded;
+      User.findById(user_id, (err, user) => {
         if (err) res.send(err);
-        const { albIdx } = req.body;
-        AlbumSchema.remove({ _id: user.album[albIdx] }, (err, user) => {
-          if (err) res.send(err);
+        const { albIdx } = req.query;
+        const { _id, name } = user.albums[albIdx];
+        AlbumSchema.remove({_id}, (err, pomc)=>{
+          if (err) console.log(err);
           else {
-            user.albums.splice(albIdx, 1);
-            user.save(err => {
-              if (err) res.send(err);
-              else {
-                res.json({ success: true });
-              }
-            })
-          };
-        });
+            User.update(
+              {_id: user_id},
+              { $pull: {"albums": { _id } }},
+              {safe: true, upsert: true}, ()=>console.log(`Deleted "${name}" Successfully`)
+            )
+          }
+        }).then(()=>{
+          user.albums.splice(albIdx, 1);
+          res.send({success: true, albums: user.albums});
+        }).catch(()=>res.send({success: false}));
       });
     })
 

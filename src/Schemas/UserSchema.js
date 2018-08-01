@@ -7,7 +7,7 @@ const User = new Schema({
   email: String,
   password: { type:String, required: true },
   created_at: Date,
-  albums:[{ type: mongoose.Schema.Types.ObjectId, ref: 'AlbumSchema' }]
+  albums:[]
 });
 
 User.pre('save', function(next) {

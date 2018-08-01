@@ -3,14 +3,15 @@ const { Schema } = mongoose;
 const { PICDIR_PATH }   = '../serverConfig';
 
 const album = new Schema({
-    name: String,
-    created_at: Date,
-    capacity: Number,
-    pics:[{
-        path: { type:String, required: true },
-        created_at: Date
-      }
-    ]
+  user_id: String,
+  name: String,
+  created_at: Date,
+  capacity: Number,
+  pics:[{
+      path: { type:String, required: true },
+      created_at: Date
+    }
+  ]
 })
 
 album.methods.configureServerPath = (pictureData) => {
