@@ -7,11 +7,7 @@ const album = new Schema({
   name: String,
   created_at: Date,
   capacity: Number,
-  pics:[{
-      path: { type:String, required: true },
-      created_at: Date
-    }
-  ]
+  pics:[]
 })
 
 album.methods.configureServerPath = (pictureData) => {

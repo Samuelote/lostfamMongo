@@ -18,6 +18,7 @@ module.exports = function (router) {
   router.route('/users/albums/')
     //Create an album
     .post((req,res) => {
+      console.log('creat album');
       const { user_id } = req.decoded;
       User.findById(user_id, (err, user) => {
         if (err) res.send(err);
