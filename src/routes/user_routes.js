@@ -18,7 +18,7 @@ module.exports = function (router) {
   router.route('/users/albums/')
     //Create an album
     .post((req,res) => {
-      console.log('creat album');
+      console.log('create album');
       const { user_id } = req.decoded;
       User.findById(user_id, (err, user) => {
         if (err) res.send(err);
@@ -36,7 +36,7 @@ module.exports = function (router) {
           User.update(
             {_id: user_id},
             { $push: {"albums": {_id, user_id, name, created_at, capacity, pics, _v} }},
-            {safe: true, upsert: true}, ()=>console.log(user.albums)
+            {safe: true, upsert: true}, ()=>res.send('Success adding album')
           )
 
         }).catch(err => {
@@ -52,6 +52,7 @@ module.exports = function (router) {
         if (err) res.send(err);
         const { albIdx } = req.query;
         albums = user.albums;
+        user.albums.forEach((alb)=>console.log(alb.name));
         res.json( albums )
       });
     })

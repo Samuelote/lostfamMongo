@@ -23,24 +23,31 @@ module.exports = function(router) {
     const { name, exif } = req.body.values;
     // console.log(exif);
     let activeAlb;
+    let cap;
     User.findById(user_id, (err, user)=>{
+      if (err) res.send('Error finding user.')
       const { albums } = user;
+      let index;
       for (let i in albums){
         if (albums[i].name === name){
           activeAlb = albums[i]._id;
+          index = i;
         }
       }
       if (activeAlb) {
-        AlbumSchema.findById(activeAlb, (err, alb)=>{
-          AlbumSchema.update(
-            {_id: activeAlb},
-            { $push: {"pics": {exif}}},
-            {safe: true, upsert: true}, (err)=>{
+        if (user.albums[index].pics.length < user.albums[index].capacity){
+          User.update(
+            {_id : user_id},
+            { $push: {[`albums.${index}.pics`]: { exif }}},
+            (err)=>{
               if (err) res.send('Error occurred when adding photo to roll.');
-              else res.send('Photo Saved to Roll!')
+              else res.send(`photo taken: ${user.albums[index].pics.length+1} / ${user.albums[index].capacity}`);
             }
-          )
-        })
+          );
+        } else {
+          console.log('Roll has hit its max');
+          res.send("You're roll has run out of film")
+        }
       } else {
         res.send('Error finding album for pic')
       }
