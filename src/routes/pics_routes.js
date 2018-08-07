@@ -20,8 +20,7 @@ module.exports = function(router) {
   })
   .post((req,res) => {
     const { user_id } = req.decoded;
-    const { name, exif } = req.body.values;
-    // console.log(exif);
+    const { name, exif, uri } = req.body.values;
     let activeAlb;
     let cap;
     User.findById(user_id, (err, user)=>{
@@ -38,7 +37,7 @@ module.exports = function(router) {
         if (user.albums[index].pics.length < user.albums[index].capacity){
           User.update(
             {_id : user_id},
-            { $push: {[`albums.${index}.pics`]: { exif }}},
+            { $push: {[`albums.${index}.pics`]: { uri, exif }}},
             (err)=>{
               if (err) res.send('Error occurred when adding photo to roll.');
               else res.send(`photo taken: ${user.albums[index].pics.length+1} / ${user.albums[index].capacity}`);
