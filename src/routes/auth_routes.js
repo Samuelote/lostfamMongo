@@ -21,7 +21,6 @@ module.exports = function (app, router) {
               });
               res.json({
                 success: true,
-                message: 'Token Granted.',
                 token
               });
             }

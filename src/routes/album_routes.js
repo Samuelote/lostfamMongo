@@ -15,7 +15,6 @@ module.exports = function (router) {
     //Get/Read all albums from such user
     .get((req, res) => {
       const { user_id } = req.decoded;
-      console.log('firing this shit!!!!!!!!!!!');
       // AlbumSchema.findById(user_id, (err, albums) => {
       //   // if (err) res.send(err);
       //   console.log(err, albums);
