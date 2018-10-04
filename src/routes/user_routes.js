@@ -36,7 +36,7 @@ module.exports = function (router) {
           User.update(
             {_id: user_id},
             { $push: {"albums": {_id, user_id, name, created_at, capacity, pics, _v} }},
-            {safe: true, upsert: true}, ()=>res.send({success: true, message: 'Success adding album'})
+            {safe: true, upsert: true}, ()=>res.send({success: true, message: 'Success adding album'}n)
           )
 
         }).catch(err => {
