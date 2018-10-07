@@ -26,7 +26,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.options('*', cors());
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 
 const router = express.Router();
 
